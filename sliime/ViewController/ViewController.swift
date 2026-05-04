@@ -16,10 +16,15 @@ class ViewController: UIViewController {
     var commandQueue: MTLCommandQueue!
     var pipelineState: MTLRenderPipelineState?
     
-    var startTime = CACurrentMediaTime()
+    var startTime: CFTimeInterval? 
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(handle(_:)),
+            name: .startTimer, object: nil
+        )
         
         metalSetup()
         viewSetup()
@@ -64,5 +69,19 @@ class ViewController: UIViewController {
         
         self.view.addSubview(hostingController.view)
         hostingController.didMove(toParent: self)
+    }
+    
+    @objc private func handle(_ notification: Notification) {
+        guard
+            let userInfo = notification.userInfo,
+            let timerState = userInfo[TimerState.Key] as? TimerState
+        else { return }
+        
+        switch timerState {
+        case .on:
+            startTime = CACurrentMediaTime()
+        case .off:
+            startTime = nil
+        }
     }
 }

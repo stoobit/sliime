@@ -11,12 +11,8 @@ import MetalKit
 extension ViewController: MTKViewDelegate {
     func draw(in view: MTKView) {
         
-        
-        guard let pipelineState = pipelineState else {
-            return
-        }
-        
-        guard let drawable = view.currentDrawable,
+        guard let pipelineState = pipelineState,
+              let drawable = view.currentDrawable,
               let descriptor = view.currentRenderPassDescriptor,
               let commandBuffer = commandQueue.makeCommandBuffer(),
               let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor)
@@ -30,26 +26,24 @@ extension ViewController: MTKViewDelegate {
         var triangleData = configureTriangle()
         renderEncoder.setVertexBytes(
             &triangleData,
-            length: MemoryLayout.size(ofValue: triangleData),
+            length: MemoryLayout.stride(ofValue: triangleData),
             index: Int(InputBufferIndexForVertexData.rawValue)
         )
         
-        renderEncoder.setVertexBytes(
-            &triangleData,
-            length: MemoryLayout.size(ofValue: triangleData),
-            index: Int(InputBufferIndexForVertexData.rawValue)
-        )
+        var time: Float = 0
+        if let startTime {
+            time = Float(CACurrentMediaTime() - startTime)
+        }
         
-        var time: Float = Float(CACurrentMediaTime() - startTime)
         renderEncoder.setVertexBytes(
             &time,
-            length: MemoryLayout.size(ofValue: time),
+            length: MemoryLayout.stride(ofValue: time),
             index: Int(InputBufferIndexForTime.rawValue)
         )
         
         renderEncoder.setVertexBytes(
             &viewportSize,
-            length: MemoryLayout.size(ofValue: viewportSize),
+            length: MemoryLayout.stride(ofValue: viewportSize),
             index:  Int(InputBufferIndexForViewportSize.rawValue)
         )
         
@@ -62,6 +56,5 @@ extension ViewController: MTKViewDelegate {
     
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
        
-    }
-    
+    } 
 }

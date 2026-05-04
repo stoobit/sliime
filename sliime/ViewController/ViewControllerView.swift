@@ -8,10 +8,18 @@
 import SwiftUI
 
 struct ViewControllerView: View {
+    @State private var timerState: TimerState = .off
+    
     var body: some View {
         VStack {
-            Button("Start Animation") {
+            Button("\(timerState == .off ? "Start" : "Reset") Animation") {
+                timerState = timerState.opposite
                 
+                NotificationCenter.default
+                    .post(
+                        name: .startTimer, object: nil,
+                        userInfo: [TimerState.Key: timerState]
+                    )
             }
         }
         .scenePadding()
