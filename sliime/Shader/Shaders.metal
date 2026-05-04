@@ -31,19 +31,16 @@ vertex RasterizerData basic_vertex
     simd_float2 pixelSpacePosition = vertexData[vertexID].position.xy;
     simd_float2 viewportSize = simd_float2(*viewPortSizePointer);
     
-    float offset = sin(*time * 2.0) * 500.0;
-    pixelSpacePosition.y += offset;
-    
+    float t = *time;
+    pixelSpacePosition.y = -0.5 * 981 * pow(t, 2) + pixelSpacePosition.y ;
+
     out.position.xy = pixelSpacePosition / (viewportSize / 2.0);
+    out.position.y += 0.5;
+    
     out.position.z = 0.0;
     out.position.w = 1.0;
-    
+
     out.color = vertexData[vertexID].color;
-    
-    float luminescence = sin(*time * 2.0 ) * 0.5 + 0.5;
-    out.color.r *= luminescence;
-    out.color.g *= luminescence;
-    out.color.b *= luminescence;
     
     return out;
 }
