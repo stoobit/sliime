@@ -40,6 +40,7 @@ class ViewController: UIViewController, MTKViewDelegate {
         pipelineStateDescriptor.fragmentFunction = fragmentProgram
         
         pipelineStateDescriptor.colorAttachments[0].pixelFormat = mtkView.colorPixelFormat
+        pipelineStateDescriptor.colorAttachments[0].isBlendingEnabled = true
             
         Task {
             pipelineState = try await mtkView.device!
@@ -52,11 +53,14 @@ class ViewController: UIViewController, MTKViewDelegate {
     }
     
     func draw(in view: MTKView) {
+        guard let pipelineState = pipelineState else {
+            return
+        }
+        
         guard let drawable = view.currentDrawable,
               let descriptor = view.currentRenderPassDescriptor,
               let commandBuffer = commandQueue.makeCommandBuffer(),
-              let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor),
-              let pipelineState = pipelineState
+              let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor)
         else { return }
         
         renderEncoder.setRenderPipelineState(pipelineState)
@@ -64,7 +68,13 @@ class ViewController: UIViewController, MTKViewDelegate {
         viewportSize.x = UInt32(view.drawableSize.width)
         viewportSize.y = UInt32(view.drawableSize.height)
         
-        var triangleData = configureTriangleData()
+        var triangleData = configureTriangle()
+        renderEncoder.setVertexBytes(
+            &triangleData,
+            length: MemoryLayout.size(ofValue: triangleData),
+            index: Int(InputBufferIndexForVertexData.rawValue)
+        )
+        
         renderEncoder.setVertexBytes(
             &triangleData,
             length: MemoryLayout.size(ofValue: triangleData),
@@ -89,5 +99,19 @@ class ViewController: UIViewController, MTKViewDelegate {
         
         commandBuffer.present(drawable)
         commandBuffer.commit()
+    }
+    
+    private func configureTriangle() -> InlineArray<3, VertexData> {
+        let red   = simd_float4(1.0, 0.0, 0.0, 1.0)
+        let blue  = simd_float4(0.0, 0.0, 1.0, 1.0)
+        let green = simd_float4(0.0, 1.0, 0.0, 1.0)
+        
+        let vertexData: InlineArray<3, VertexData> = [
+            VertexData(position: simd_float2( 0.0,  300), color: red),
+            VertexData(position: simd_float2(-300, -300), color: blue),
+            VertexData(position: simd_float2( 300, -300), color: green),
+        ]
+        
+        return vertexData;
     }
 }

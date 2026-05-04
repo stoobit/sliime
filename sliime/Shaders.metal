@@ -40,6 +40,11 @@ vertex RasterizerData basic_vertex
     
     out.color = vertexData[vertexID].color;
     
+    float luminescence = sin(*time * 2.0 ) * 0.5 + 0.5;
+    out.color.r *= luminescence;
+    out.color.g *= luminescence;
+    out.color.b *= luminescence;
+    
     return out;
 }
 
