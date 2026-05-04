@@ -22,13 +22,17 @@ vertex RasterizerData basic_vertex
 (
  uint vertexID [[ vertex_id ]],
  constant VertexData *vertexData [[ buffer(InputBufferIndexForVertexData) ]],
- constant simd_uint2 *viewPortSizePointer [[ buffer(InputBufferIndexForViewportSize) ]]
+ constant simd_uint2 *viewPortSizePointer [[ buffer(InputBufferIndexForViewportSize) ]],
+ constant float *time [[ buffer(InputBufferIndexForTime) ]]
  )
 {
     RasterizerData out;
     
     simd_float2 pixelSpacePosition = vertexData[vertexID].position.xy;
     simd_float2 viewportSize = simd_float2(*viewPortSizePointer);
+    
+    float offset = sin(*time * 2.0) * 500.0;
+    pixelSpacePosition.y += offset;
     
     out.position.xy = pixelSpacePosition / (viewportSize / 2.0);
     out.position.z = 0.0;

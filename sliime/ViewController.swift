@@ -13,7 +13,7 @@ class ViewController: UIViewController, MTKViewDelegate {
     var viewportSize: simd_uint2 = .zero
     
     var commandQueue: MTLCommandQueue!
-    var pipelineState: MTLRenderPipelineState!
+    var pipelineState: MTLRenderPipelineState?
     
     var startTime = CACurrentMediaTime()
     
@@ -41,8 +41,10 @@ class ViewController: UIViewController, MTKViewDelegate {
         
         pipelineStateDescriptor.colorAttachments[0].pixelFormat = mtkView.colorPixelFormat
             
-        pipelineState = try! mtkView.device!
-            .makeRenderPipelineState(descriptor: pipelineStateDescriptor)
+        Task {
+            pipelineState = try await mtkView.device!
+                .makeRenderPipelineState(descriptor: pipelineStateDescriptor)
+        }
     }
     
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
@@ -53,7 +55,8 @@ class ViewController: UIViewController, MTKViewDelegate {
         guard let drawable = view.currentDrawable,
               let descriptor = view.currentRenderPassDescriptor,
               let commandBuffer = commandQueue.makeCommandBuffer(),
-              let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor)
+              let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor),
+              let pipelineState = pipelineState
         else { return }
         
         renderEncoder.setRenderPipelineState(pipelineState)
@@ -61,15 +64,18 @@ class ViewController: UIViewController, MTKViewDelegate {
         viewportSize.x = UInt32(view.drawableSize.width)
         viewportSize.y = UInt32(view.drawableSize.height)
         
-        let currentTime: Double = CACurrentMediaTime()
-        let elapsedTime: Double = currentTime - startTime
-        
-        var triangleData = configureTriangleData(elapsedTime)
-        
+        var triangleData = configureTriangleData()
         renderEncoder.setVertexBytes(
             &triangleData,
             length: MemoryLayout.size(ofValue: triangleData),
             index: Int(InputBufferIndexForVertexData.rawValue)
+        )
+        
+        var time: Float = Float(CACurrentMediaTime() - startTime)
+        renderEncoder.setVertexBytes(
+            &time,
+            length: MemoryLayout.size(ofValue: time),
+            index: Int(InputBufferIndexForTime.rawValue)
         )
         
         renderEncoder.setVertexBytes(

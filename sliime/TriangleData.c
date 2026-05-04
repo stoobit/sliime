@@ -11,19 +11,17 @@ const simd_float4 red = { 1.0, 0.0, 0.0, 1.0 };
 const simd_float4 green = { 0.0, 1.0, 0.0, 1.0 };
 const simd_float4 blue = { 0.0, 0.0, 1.0, 1.0 };
 
-TriangleData configureTriangleData(double elapsedTime) {
-    const double offset = sin(elapsedTime * 2) * 500;
-    
+TriangleData configureTriangleData(void) {
     TriangleData triangleData;
-    triangle(offset, &triangleData);
+    triangle(&triangleData);
     
     return triangleData;
 }
 
-void triangle(double offset, TriangleData *triangleData) {
-    simd_float2 position0 = {  0.0,   300 + offset };
-    simd_float2 position1 = { -300,  -300 + offset };
-    simd_float2 position2 = {  300,  -300 + offset };
+void triangle(TriangleData *triangleData) {
+    simd_float2 position0 = {  0.0,   300 };
+    simd_float2 position1 = { -300,  -300 };
+    simd_float2 position2 = {  300,  -300 };
     
     triangleData->vertex0.color = red;
     triangleData->vertex0.position = position0;

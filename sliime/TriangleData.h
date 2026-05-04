@@ -13,7 +13,7 @@
 
 #include "ShaderTypes.h"
 
-void triangle(double offset, TriangleData *triangleData);
-TriangleData configureTriangleData(double elapsedTime);
+void triangle(TriangleData *triangleData);
+TriangleData configureTriangleData(void);
 
 #endif
