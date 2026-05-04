@@ -16,6 +16,7 @@ typedef enum InputBufferIndex
     InputBufferIndexForVertexData = 0,
     InputBufferIndexForViewportSize = 1,
     InputBufferIndexForTime = 2,
+    InputBufferIndexForGravity = 3,
     
 } InputBufferIndex;
 

@@ -11,7 +11,7 @@ import MetalKit
 
 class ViewController: UIViewController {
     var mtkView: MTKView!
-    var viewportSize: simd_uint2 = .zero
+    var viewportSize: CGSize = .zero
     
     var commandQueue: MTLCommandQueue!
     var pipelineState: MTLRenderPipelineState?

@@ -10,7 +10,7 @@ import MetalKit
 
 extension ViewController: MTKViewDelegate {
     func draw(in view: MTKView) {
-        
+        // SETUP
         guard let pipelineState = pipelineState,
               let drawable = view.currentDrawable,
               let descriptor = view.currentRenderPassDescriptor,
@@ -20,20 +20,30 @@ extension ViewController: MTKViewDelegate {
         
         renderEncoder.setRenderPipelineState(pipelineState)
         
-        viewportSize.x = UInt32(view.drawableSize.width)
-        viewportSize.y = UInt32(view.drawableSize.height)
+        // VIEWPORT
+        viewportSize.width = view.drawableSize.width
+        viewportSize.height = view.drawableSize.height
         
-        var triangleData = configureTriangle()
+        var viewportSize = viewportSize.simd_uint2
+        renderEncoder.setVertexBytes(
+            &viewportSize,
+            length: MemoryLayout.stride(ofValue: viewportSize),
+            index:  Int(InputBufferIndexForViewportSize.rawValue)
+        )
+        
+        // TIME
+        var time: Float = 0
+        if let startTime {
+            time = Float(CACurrentMediaTime() - startTime)
+        }
+        
+        // SHAPES
+        var triangleData = configureShapes()
         renderEncoder.setVertexBytes(
             &triangleData,
             length: MemoryLayout.stride(ofValue: triangleData),
             index: Int(InputBufferIndexForVertexData.rawValue)
         )
-        
-        var time: Float = 0
-        if let startTime {
-            time = Float(CACurrentMediaTime() - startTime)
-        }
         
         renderEncoder.setVertexBytes(
             &time,
@@ -41,16 +51,27 @@ extension ViewController: MTKViewDelegate {
             index: Int(InputBufferIndexForTime.rawValue)
         )
         
+        // GRAVITY
+        var gravityMultiplier: Float = 0.0
         renderEncoder.setVertexBytes(
-            &viewportSize,
-            length: MemoryLayout.stride(ofValue: viewportSize),
-            index:  Int(InputBufferIndexForViewportSize.rawValue)
+            &gravityMultiplier,
+            length: MemoryLayout.stride(ofValue: gravityMultiplier),
+            index: Int(InputBufferIndexForGravity.rawValue)
         )
+        renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
         
-        renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
+        gravityMultiplier = 1.0
+        renderEncoder.setVertexBytes(
+            &gravityMultiplier,
+            length: MemoryLayout.stride(ofValue: gravityMultiplier),
+            index: Int(InputBufferIndexForGravity.rawValue)
+        )
+        renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 4, vertexCount: 4)
+        
+        // FINISH
         renderEncoder.endEncoding()
-        
         commandBuffer.present(drawable)
+        
         commandBuffer.commit()
     }
     
