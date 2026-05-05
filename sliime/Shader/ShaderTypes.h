@@ -10,6 +10,14 @@
 
 #include <simd/simd.h>
 
+typedef struct
+{
+
+    simd_float2 position; // DO NOT MODIFY, EXCEPT: SIMD2 -> SIMD3
+    simd_float4 color;
+    
+} Vertex;
+
 typedef enum InputBufferIndex
 {
     
@@ -19,22 +27,5 @@ typedef enum InputBufferIndex
     InputBufferIndexForGravity = 3,
     
 } InputBufferIndex;
-
-typedef struct
-{
-
-    simd_float2 position;
-    simd_float4 color;
-    
-} Vertex;
-
-typedef struct
-{
-    
-    Vertex vertex0;
-    Vertex vertex1;
-    Vertex vertex2;
-    
-} TriangleData;
 
 #endif
