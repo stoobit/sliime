@@ -21,7 +21,7 @@ struct RasterizerData
 vertex RasterizerData basic_vertex
 (
  uint vertexID [[ vertex_id ]],
- constant VertexData *vertexData [[ buffer(InputBufferIndexForVertexData) ]],
+ constant Vertex *vertexData [[ buffer(InputBufferIndexForVertexData) ]],
  constant simd_uint2 *viewPortSizePointer [[ buffer(InputBufferIndexForViewportSize) ]],
  constant float *time [[ buffer(InputBufferIndexForTime) ]],
  constant float *gravity [[ buffer(InputBufferIndexForGravity) ]]

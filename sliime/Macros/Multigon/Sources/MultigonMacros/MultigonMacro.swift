@@ -1,0 +1,113 @@
+import SwiftCompilerPlugin
+import SwiftSyntax
+import SwiftSyntaxBuilder
+import SwiftSyntaxMacros
+import Foundation
+
+public struct MultigonMacro: DeclarationMacro {
+    public static func expansion(
+        of node: some SwiftSyntax.FreestandingMacroExpansionSyntax,
+        in context: some SwiftSyntaxMacros.MacroExpansionContext
+    ) throws -> [SwiftSyntax.DeclSyntax] {
+        
+        let name = name(from: node)
+        let (type, vertices) = vertices(from: node)
+        
+        return [
+            DeclSyntax(try StructDeclSyntax("struct \(raw: name)") {
+                try VariableDeclSyntax("var center: SIMD3<Float> = [0, 0, 0]")
+                    .with(\.trailingTrivia, .newlines(2))
+                
+                try VariableDeclSyntax("var scale: Float")
+                try InitializerDeclSyntax("init(scale: Float)") {
+                    "self.scale = scale"
+                }
+                .with(\.trailingTrivia, .newlines(2))
+                
+                let string: String = calculate(using: vertices)
+                    .joined(separator: ",")
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                
+                """
+                private static let vertices: InlineArray<\(raw: vertices.count), \(raw: type)> = [
+                    \(raw: string)
+                ]
+                """
+                
+                try
+                VariableDeclSyntax("var vertices: InlineArray<\(raw: vertices.count), \(raw: type)>") {
+                    "return Self.vertices"
+                }
+                .with(\.leadingTrivia, .newlines(2))
+            })
+        ]
+    }
+    
+    static private func name(from node: some FreestandingMacroExpansionSyntax) -> String {
+        let expression = node.arguments.first?.expression.as(StringLiteralExprSyntax.self)!
+        let segments = expression!.segments as StringLiteralSegmentListSyntax
+        let segment = segments.first?.as(StringSegmentSyntax.self)
+        let name = segment?.content.text
+        
+        return name ?? ""
+    }
+    
+    static private func vertices(from node: some FreestandingMacroExpansionSyntax) -> (String, [String]) {
+        let descriptions = (node.trailingClosure!.statements as CodeBlockItemListSyntax)
+            .map { $0 as CodeBlockItemSyntax }
+            .map { $0.description }
+        
+        return ("Vertex", descriptions)
+    }
+    
+    static private func calculate(using vertices: [String]) -> [String] {
+        var vertices = vertices
+        let points: [SIMD3<Double>] = vertices
+            .map { parse(vertex: $0) }
+        
+        let center = points.reduce(.zero, +) / Double(points.count)
+        
+        for (index, point) in points.enumerated() {
+            let string = vertices[index]
+            let point = point - center
+            
+            vertices[index] = replace(in: string, using: point)
+        }
+        
+        return vertices
+    }
+    
+    static private func replace(in string: String, using point: SIMD3<Double>) -> String {
+        return string
+            .replacing(
+                /simd_float2\([^)]*\)/,
+                with: "simd_float2(\(point.x), \(point.y))"
+            )
+            .replacing(
+                /simd_float3\([^)]*\)/,
+                with: "simd_float3(\(point.x), \(point.y), \(point.z))"
+            )
+    }
+    
+    static private func parse(vertex: String) -> SIMD3<Double> {
+        let regex = /position:\s*(?!position\b)[^()]+\(\s*([+-]?\d*\.?\d+)\s*,\s*([+-]?\d*\.?\d+)\s*(?:,\s*([+-]?\d*\.?\d+)\s*)?\)/
+        
+        guard let match = vertex.firstMatch(of: regex) else {
+            fatalError("Missing or invalid 'position' argument. Each vertex must define 'position' as a simd_float2(x, y) or simd_float3(x, y, z).")
+        }
+        
+        let (_, p1, p2, p3) = match.output
+        
+        let points: [Double] = [p1, p2, p3]
+            .map { Double($0 ?? "-") ?? 0 }
+        
+        return SIMD3<Double>(points[0], points[1], points[2])
+    }
+}
+
+@main
+struct MultigonPlugin: CompilerPlugin {
+    let providingMacros: [Macro.Type] = [
+        MultigonMacro.self,
+    ]
+}

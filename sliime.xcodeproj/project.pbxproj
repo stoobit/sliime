@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		BBAF77E22FAA91D800FC5DB6 /* Multigon in Frameworks */ = {isa = PBXBuildFile; productRef = BBAF77E12FAA91D800FC5DB6 /* Multigon */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		BB23513E2FA756DC0010ABF9 /* sliime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sliime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -15,6 +19,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
+				Macros/Multigon,
 			);
 			target = BB23513D2FA756DC0010ABF9 /* sliime */;
 		};
@@ -36,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BBAF77E22FAA91D800FC5DB6 /* Multigon in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +84,7 @@
 			);
 			name = sliime;
 			packageProductDependencies = (
+				BBAF77E12FAA91D800FC5DB6 /* Multigon */,
 			);
 			productName = sliime;
 			productReference = BB23513E2FA756DC0010ABF9 /* sliime.app */;
@@ -108,6 +115,9 @@
 			);
 			mainGroup = BB2351352FA756DC0010ABF9;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				BBAF77E02FAA91D800FC5DB6 /* XCLocalSwiftPackageReference "sliime/Macros/Multigon" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BB23513F2FA756DC0010ABF9 /* Products */;
 			projectDirPath = "";
@@ -351,6 +361,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		BBAF77E02FAA91D800FC5DB6 /* XCLocalSwiftPackageReference "sliime/Macros/Multigon" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = sliime/Macros/Multigon;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BBAF77E12FAA91D800FC5DB6 /* Multigon */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Multigon;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = BB2351362FA756DC0010ABF9 /* Project object */;
 }

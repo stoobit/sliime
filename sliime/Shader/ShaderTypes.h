@@ -26,14 +26,14 @@ typedef struct
     simd_float2 position;
     simd_float4 color;
     
-} VertexData;
+} Vertex;
 
 typedef struct
 {
     
-    VertexData vertex0;
-    VertexData vertex1;
-    VertexData vertex2;
+    Vertex vertex0;
+    Vertex vertex1;
+    Vertex vertex2;
     
 } TriangleData;
 
