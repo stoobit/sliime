@@ -15,7 +15,9 @@ public struct MultigonMacro: DeclarationMacro {
         
         return [
             DeclSyntax(try StructDeclSyntax("struct \(raw: name): Renderable") {
-                try VariableDeclSyntax("var center: SIMD3<Float> = [0, 0, 0]")
+                try VariableDeclSyntax("var position: SIMD3<Float> = [0, 0, 0]")
+                try VariableDeclSyntax("var velocity: SIMD3<Float> = [0, 0, 0]")
+                try VariableDeclSyntax("var acceleration: SIMD3<Float> = [0, 0, 0]")
                     .with(\.trailingTrivia, .newlines(2))
                 
                 try VariableDeclSyntax("var scale: Float")
@@ -37,7 +39,7 @@ public struct MultigonMacro: DeclarationMacro {
                 try FunctionDeclSyntax("mutating func render(using renderEncoder: any MTLRenderCommandEncoder)") {
                     let buffers = [
                         ("vertices", "InputBufferIndexForVertexData"),
-                        ("center", "InputBufferIndexForCenter"),
+                        ("position", "InputBufferIndexForCenter"),
                         ("scale", "InputBufferIndexForScale"),
                         ("rotation", "InputBufferIndexForRotation")
                     ]

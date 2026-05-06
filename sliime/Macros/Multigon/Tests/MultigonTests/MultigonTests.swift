@@ -26,8 +26,10 @@ final class MultigonTests: XCTestCase {
             """,
             expandedSource: """
             struct Triangle: Renderable {
-                var center: SIMD3<Float> = [0, 0, 0]
-
+                var position: SIMD3<Float> = [0, 0, 0]
+                var velocity: SIMD3<Float> = [0, 0, 0]
+                var acceleration: SIMD3<Float> = [0, 0, 0]
+            
                 var scale: Float
                 var rotation: Float = 0
 
@@ -46,8 +48,8 @@ final class MultigonTests: XCTestCase {
                     )
 
                     renderEncoder.setVertexBytes(
-                        &center,
-                        length: MemoryLayout.stride(ofValue: center),
+                        &position,
+                        length: MemoryLayout.stride(ofValue: position),
                         index: Int(InputBufferIndexForCenter.rawValue)
                     )
 

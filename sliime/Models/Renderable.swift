@@ -9,7 +9,10 @@ import Metal
 import Foundation
 
 protocol Renderable {
-    var center: SIMD3<Float> { get set }
+    var position: SIMD3<Float> { get set }
+    var velocity: SIMD3<Float> { get set }
+    var acceleration: SIMD3<Float> { get set }
+    
     var scale: Float { get set }
     var rotation: Float { get set }
     
