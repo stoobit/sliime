@@ -37,10 +37,4 @@ enum Shapes {
         VertexData(position: simd_float2( 0.433, -0.25), color: Color.red)
         VertexData(position: simd_float2( 0.0,   -0.50), color: Color.red)
     }
-    
-    static func render( _ shapes: inout [any Renderable], using renderEncoder: MTLRenderCommandEncoder) {
-        for index in 0..<shapes.count {
-            shapes[index].render(using: renderEncoder)
-        }
-    }
 }

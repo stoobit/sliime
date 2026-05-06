@@ -16,6 +16,8 @@ class ViewController: UIViewController {
     var commandQueue: MTLCommandQueue!
     var pipelineState: MTLRenderPipelineState?
     
+    var renderable: [Renderable] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -24,10 +26,11 @@ class ViewController: UIViewController {
             name: .startTimer, object: nil
         )
         
+        displayLinkSetup()
         metalSetup()
         viewSetup()
         
-        setupDisplayLink()
+        initial()
     }
     
     func metalSetup() {
@@ -69,6 +72,11 @@ class ViewController: UIViewController {
         
         self.view.addSubview(hostingController.view)
         hostingController.didMove(toParent: self)
+    }
+    
+    func displayLinkSetup() {
+        let displayLink = CADisplayLink(target: self, selector: #selector(update))
+        displayLink.add(to: .main, forMode: .default)
     }
     
     @objc private func handle(_ notification: Notification) {

@@ -31,17 +31,10 @@ extension ViewController: MTKViewDelegate {
             index:  Int(InputBufferIndexForViewportSize.rawValue)
         )
         
-        // SHAPES
-        var triangle = Shapes.Triangle(scale: 300)
-        triangle.center.y += 500
-        triangle.render(using: renderEncoder)
-        
-        var square = Shapes.Square(scale: 300)
-        square.render(using: renderEncoder)
-        
-        var hexagon = Shapes.Hexagon(scale: 300)
-        hexagon.center.y -= 500
-        hexagon.render(using: renderEncoder)
+        // RENDERABLE
+        for index in 0..<renderable.count {
+            renderable[index].render(using: renderEncoder)
+        }
         
         // FINISH
         renderEncoder.endEncoding()
@@ -52,5 +45,5 @@ extension ViewController: MTKViewDelegate {
     
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
        
-    } 
+    }
 }
