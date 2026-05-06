@@ -15,8 +15,8 @@ extension ViewController {
         triangle.position.y += 500
         renderable.append(triangle)
         
-        let square = Shapes.Square(scale: 300)
-        renderable.append(square)
+        let circle = Shapes.Circle(scale: 300)
+        renderable.append(circle)
         
         var hexagon = Shapes.Hexagon(scale: 300)
         hexagon.position.y -= 500

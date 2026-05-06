@@ -11,7 +11,9 @@ public struct MultigonMacro: DeclarationMacro {
     ) throws -> [SwiftSyntax.DeclSyntax] {
         
         let name = name(from: node)
-        let (type, vertices) = vertices(from: node)
+        
+        let vertices = vertices(from: node)
+        let isProcedural = vertices.first?.contains("Procedural") == true
         
         return [
             DeclSyntax(try StructDeclSyntax("struct \(raw: name): Renderable") {
@@ -23,13 +25,14 @@ public struct MultigonMacro: DeclarationMacro {
                 try VariableDeclSyntax("var scale: Float")
                 try VariableDeclSyntax("var rotation: Float = 0")
                 
-                let string: String = calculate(using: vertices)
-                    .joined(separator: ",")
+                let strings = isProcedural ? procedural(using: vertices) : calculate(using: vertices)
+                let string = strings
+                    .joined(separator: ",\n")
                     .trimmingCharacters(in: .whitespacesAndNewlines)
                 
                 try VariableDeclSyntax(
                     """
-                    var vertices: InlineArray<\(raw: vertices.count), \(raw: type)> = [
+                    var vertices: InlineArray<\(raw: strings.count), VertexData> = [
                         \(raw: string)
                     ]
                     """
@@ -60,7 +63,7 @@ public struct MultigonMacro: DeclarationMacro {
                     ExprSyntax(
                             """
                             renderEncoder.drawPrimitives(
-                                type: .triangleStrip, vertexStart: 0, vertexCount: \(raw: vertices.count)
+                                type: .triangleStrip, vertexStart: 0, vertexCount: \(raw: strings.count)
                             )
                             """
                         )
@@ -79,20 +82,46 @@ public struct MultigonMacro: DeclarationMacro {
         return name ?? ""
     }
     
-    static private func vertices(from node: some FreestandingMacroExpansionSyntax) -> (String, [String]) {
+    static private func vertices(from node: some FreestandingMacroExpansionSyntax) -> [String] {
         let statements = (node.trailingClosure!.statements as CodeBlockItemListSyntax)
             .map { $0 as CodeBlockItemSyntax }
+
         
-        let name = statements.first?
-            .item.as(FunctionCallExprSyntax.self)?
-            .calledExpression.as(DeclReferenceExprSyntax.self)?
-            .baseName.identifier?.name
-        
-        guard let name else {
-            fatalError("No base name for vertices found.")
+        return statements.map { $0.description }
+    }
+    
+    static private func procedural(using strings: [String]) -> [String] {
+        guard let procedural = strings.first else {
+            return []
         }
         
-        return (name, statements.map { $0.description })
+        let (edges, color) = parse(procedural: procedural)
+        
+        var zigzagIndices: [Int] = []
+        var left = 0
+        var right = edges - 1
+        
+        while left <= right {
+            zigzagIndices.append(left)
+            if left != right {
+                zigzagIndices.append(right)
+            }
+            left += 1
+            right -= 1
+        }
+        
+        var array: [String] = []
+        for i in zigzagIndices {
+            let angle = Float(i) * (2.0 * .pi / Float(edges))
+            let x = 0.5 * sin(angle)
+            let y = 0.5 * cos(angle)
+            
+            array.append(
+                "VertexData(position: simd_float2(\(x), \(y)), color: \(color))"
+            )
+        }
+        
+        return array
     }
     
     static private func calculate(using vertices: [String]) -> [String] {
@@ -137,6 +166,23 @@ public struct MultigonMacro: DeclarationMacro {
             .map { Double($0 ?? "-") ?? 0 }
         
         return SIMD3<Double>(points[0], points[1], points[2])
+    }
+    
+    static private func parse(procedural: String) -> (edges: Int, color: String) {
+        let regex = /Procedural\(\s*edges:\s*(\d+)\s*,\s*color:\s*(.+)\)/
+        
+        guard let match = procedural.firstMatch(of: regex) else {
+            fatalError("Invalid Procedural syntax.")
+        }
+        
+        let edgesString = String(match.output.1)
+        let colorString = String(match.output.2)
+        
+        guard let edges = Int(edgesString) else {
+            fatalError("Edges must be an integer.")
+        }
+        
+        return (edges: edges, color: colorString)
     }
 }
 

@@ -17,4 +17,13 @@ struct VertexBuilder {
     static func buildBlock(_ components: VertexData...) -> [VertexData] {
         return components
     }
+    
+    static func buildBlock(_ component: Procedural) -> [VertexData] {
+        return []
+    }
+}
+
+struct Procedural {
+    var edges: Int
+    var color: SIMD4<Float>
 }
