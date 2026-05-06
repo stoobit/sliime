@@ -18,3 +18,35 @@ protocol Renderable {
     
     mutating func render(using renderEncoder: any MTLRenderCommandEncoder)
 }
+
+extension Renderable {
+    func position(x: Float = 0, y: Float = 0, z: Float = 0) -> Self {
+        var copy = self
+        copy.position = simd_float3(x, y, z)
+        return copy
+    }
+    
+    func velocity(x: Float = 0, y: Float = 0, z: Float = 0) -> Self {
+        var copy = self
+        copy.velocity = simd_float3(x, y, z)
+        return copy
+    }
+    
+    func acceleration(x: Float = 0, y: Float = 0, z: Float = 0) -> Self {
+        var copy = self
+        copy.acceleration = simd_float3(x, y, z)
+        return copy
+    }
+    
+    func scale(_ value: Float) -> Self {
+        var copy = self
+        copy.scale = value
+        return copy
+    }
+    
+    func rotation(_ value: Float) -> Self {
+        var copy = self
+        copy.rotation = value
+        return copy
+    }
+}

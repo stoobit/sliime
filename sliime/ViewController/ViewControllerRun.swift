@@ -5,31 +5,30 @@
 //  Created by Till Brügmann on 06.05.26.
 //
 
-import UIKit
+import SwiftUI
 
 extension ViewController {
     @objc func initial() {
-        renderable.removeAll()
-        
-        var triangle = Shapes.Triangle(scale: 300)
-        triangle.position.y += 500
-        renderable.append(triangle)
-        
-        let circle = Shapes.Circle(scale: 300)
-        renderable.append(circle)
-        
-        var hexagon = Shapes.Hexagon(scale: 300)
-        hexagon.position.y -= 500
-        renderable.append(hexagon)
+        renderable = [
+            
+            Shapes.BlueCircle(scale: 300)
+                .position(y: 500)
+                .acceleration(y: -9.81 * 100),
+            
+            Shapes.RedCircle(scale: 300)
+                .position(y: -500)
+            
+        ]
     }
     
     @objc func update(displaylink: CADisplayLink) {
-        guard let initialTime else { return }
-        let delta: Float = Float(displaylink.targetTimestamp - initialTime)
+        let time: Float = Float(displaylink.targetTimestamp - displaylink.timestamp)
         
-        
-        renderable[0].position.y -= 0.5 * 9.81 * pow(delta, 2)
-        
-        renderable[2].scale += sin(delta * 10) * 2
+        for index in 0..<renderable.count {
+            let object = renderable[index]
+            
+            renderable[index].velocity.y += object.acceleration.y * time
+            renderable[index].position.y += object.velocity.y * time
+        }
     }
 }

@@ -17,8 +17,6 @@ class ViewController: UIViewController {
     var pipelineState: MTLRenderPipelineState?
     
     var displayLink: CADisplayLink!
-    var initialTime: CFTimeInterval?
-    
     var renderable: [Renderable] = []
     
     override func viewDidLoad() {
@@ -80,6 +78,8 @@ class ViewController: UIViewController {
     func displayLinkSetup() {
         displayLink = CADisplayLink(target: self, selector: #selector(update))
         displayLink.add(to: .main, forMode: .default)
+        
+        displayLink.isPaused = true
     }
     
     @objc private func handle(_ notification: Notification) {
@@ -90,9 +90,9 @@ class ViewController: UIViewController {
         
         switch timerState {
         case .on:
-            initialTime = displayLink.targetTimestamp
+            displayLink.isPaused = false
         case .off:
-            initialTime = nil
+            displayLink.isPaused = true
             initial()
         }
     }

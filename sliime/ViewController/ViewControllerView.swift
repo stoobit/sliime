@@ -12,7 +12,7 @@ struct ViewControllerView: View {
     
     var body: some View {
         VStack {
-            Button("\(timerState == .off ? "Start" : "Reset") Animation") {
+            Button(timerState == .off ? "Start" : "Reset") {
                 timerState = timerState.opposite
                 
                 NotificationCenter.default

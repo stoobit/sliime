@@ -32,7 +32,11 @@ struct Shapes {
         VertexData(position: simd_float2( 0.0,   -0.50), color: Color.red)
     }
     
-    #Multigon("Circle") {
+    #Multigon("RedCircle") {
         Procedural(edges: 100, color: Color.red)
+    }
+    
+    #Multigon("BlueCircle") {
+        Procedural(edges: 100, color: Color.blue)
     }
 }
