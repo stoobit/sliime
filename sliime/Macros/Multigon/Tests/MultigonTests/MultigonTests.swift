@@ -29,6 +29,8 @@ final class MultigonTests: XCTestCase {
                 var center: SIMD3<Float> = [0, 0, 0]
 
                 var scale: Float
+                var rotation: Float = 0
+            
                 init(scale: Float) {
                     self.scale = scale
                 }

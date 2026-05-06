@@ -16,8 +16,6 @@ class ViewController: UIViewController {
     var commandQueue: MTLCommandQueue!
     var pipelineState: MTLRenderPipelineState?
     
-    var startTime: CFTimeInterval? 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -28,6 +26,8 @@ class ViewController: UIViewController {
         
         metalSetup()
         viewSetup()
+        
+        setupDisplayLink()
     }
     
     func metalSetup() {
@@ -79,9 +79,9 @@ class ViewController: UIViewController {
         
         switch timerState {
         case .on:
-            startTime = CACurrentMediaTime()
+            return
         case .off:
-            startTime = nil
+            return
         }
     }
 }

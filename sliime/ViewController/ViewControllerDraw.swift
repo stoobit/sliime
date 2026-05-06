@@ -31,42 +31,17 @@ extension ViewController: MTKViewDelegate {
             index:  Int(InputBufferIndexForViewportSize.rawValue)
         )
         
-        // TIME
-        var time: Float = 0
-        if let startTime {
-            time = Float(CACurrentMediaTime() - startTime)
-        }
-        
         // SHAPES
-        var triangleData = configureShapes()
+        let triangle = Shape.Triangle(scale: 20)
+        var vertices = triangle.vertices
+        
         renderEncoder.setVertexBytes(
-            &triangleData,
-            length: MemoryLayout.stride(ofValue: triangleData),
+            &vertices,
+            length: MemoryLayout.stride(ofValue: vertices),
             index: Int(InputBufferIndexForVertexData.rawValue)
         )
         
-        renderEncoder.setVertexBytes(
-            &time,
-            length: MemoryLayout.stride(ofValue: time),
-            index: Int(InputBufferIndexForTime.rawValue)
-        )
-        
-        // GRAVITY
-        var gravityMultiplier: Float = 0.0
-        renderEncoder.setVertexBytes(
-            &gravityMultiplier,
-            length: MemoryLayout.stride(ofValue: gravityMultiplier),
-            index: Int(InputBufferIndexForGravity.rawValue)
-        )
-        renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
-        
-        gravityMultiplier = 1.0
-        renderEncoder.setVertexBytes(
-            &gravityMultiplier,
-            length: MemoryLayout.stride(ofValue: gravityMultiplier),
-            index: Int(InputBufferIndexForGravity.rawValue)
-        )
-        renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 4, vertexCount: 4)
+        renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 3)
         
         // FINISH
         renderEncoder.endEncoding()

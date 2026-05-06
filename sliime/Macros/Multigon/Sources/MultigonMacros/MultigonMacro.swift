@@ -19,9 +19,12 @@ public struct MultigonMacro: DeclarationMacro {
                     .with(\.trailingTrivia, .newlines(2))
                 
                 try VariableDeclSyntax("var scale: Float")
+                try VariableDeclSyntax("var rotation: Float = 0")
+                
                 try InitializerDeclSyntax("init(scale: Float)") {
                     "self.scale = scale"
                 }
+                .with(\.leadingTrivia, .newlines(2))
                 .with(\.trailingTrivia, .newlines(2))
                 
                 let string: String = calculate(using: vertices)
@@ -53,11 +56,19 @@ public struct MultigonMacro: DeclarationMacro {
     }
     
     static private func vertices(from node: some FreestandingMacroExpansionSyntax) -> (String, [String]) {
-        let descriptions = (node.trailingClosure!.statements as CodeBlockItemListSyntax)
+        let statements = (node.trailingClosure!.statements as CodeBlockItemListSyntax)
             .map { $0 as CodeBlockItemSyntax }
-            .map { $0.description }
         
-        return ("Vertex", descriptions)
+        let name = statements.first?
+            .item.as(FunctionCallExprSyntax.self)?
+            .calledExpression.as(DeclReferenceExprSyntax.self)?
+            .baseName.identifier?.name
+        
+        guard let name else {
+            fatalError("No base name for vertices found.")
+        }
+        
+        return (name, statements.map { $0.description })
     }
     
     static private func calculate(using vertices: [String]) -> [String] {

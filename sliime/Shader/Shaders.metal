@@ -21,10 +21,8 @@ struct RasterizerData
 vertex RasterizerData basic_vertex
 (
  uint vertexID [[ vertex_id ]],
- constant Vertex *vertexData [[ buffer(InputBufferIndexForVertexData) ]],
- constant simd_uint2 *viewPortSizePointer [[ buffer(InputBufferIndexForViewportSize) ]],
- constant float *time [[ buffer(InputBufferIndexForTime) ]],
- constant float *gravity [[ buffer(InputBufferIndexForGravity) ]]
+ constant VertexData *vertexData [[ buffer(InputBufferIndexForVertexData) ]],
+ constant simd_uint2 *viewPortSizePointer [[ buffer(InputBufferIndexForViewportSize) ]]
  )
 {
     RasterizerData out;
@@ -32,13 +30,6 @@ vertex RasterizerData basic_vertex
     simd_float2 pixelSpacePosition = vertexData[vertexID].position.xy;
     simd_float2 viewportSize = simd_float2(*viewPortSizePointer);
     
-    float g = 981.0 * 2;
-    float position = -0.5 * g * pow(*time, 2) * *gravity;
-    
-    float offset = 350 - pixelSpacePosition.y;
-    float minimum = -viewportSize.y * 0.5 + (250 - offset) * *gravity;
-    
-    pixelSpacePosition.y = max(position + pixelSpacePosition.y, minimum);
     out.position.xy = pixelSpacePosition / (viewportSize / 2.0);
     
     out.position.z = 0.0;

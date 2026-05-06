@@ -6,17 +6,20 @@
 //
 
 import Foundation
+import Multigon
 
-//struct Shape {
-//    var centerOfMass: VertexData
-//}
-//
-//#Multigon(named: "Triangle") {
-//    VertexData(position: <#T##simd_float2#>, color: <#T##simd_float4#>),
-//    VertexData(position: <#T##simd_float2#>, color: <#T##simd_float4#>),
-//    VertexData(position: <#T##simd_float2#>, color: <#T##simd_float4#>),
-//}
-//
-//// Size of InlineArray is determined dynamically.
-//
-//let triangle = Triangle(size: 10)
+struct Shape {
+    
+    #Multigon("Triangle") {
+        VertexData(position: simd_float2( 0.0,  0.5), color: Color.red)
+        VertexData(position: simd_float2( 0.5, -0.5), color: Color.red)
+        VertexData(position: simd_float2(-0.5, -0.5), color: Color.red)
+    }
+    
+}
+
+enum Color {
+    static let red   = simd_float4(1.0, 0.0, 0.0, 1.0)
+    static let blue  = simd_float4(0.0, 0.0, 1.0, 1.0)
+    static let green = simd_float4(0.0, 1.0, 0.0, 1.0)
+}

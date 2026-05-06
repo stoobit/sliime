@@ -16,7 +16,7 @@ typedef struct
     simd_float2 position; // DO NOT MODIFY, EXCEPT: SIMD2 -> SIMD3
     simd_float4 color;
     
-} Vertex;
+} VertexData;
 
 typedef enum InputBufferIndex
 {
