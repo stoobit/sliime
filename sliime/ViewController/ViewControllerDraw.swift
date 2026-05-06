@@ -32,8 +32,16 @@ extension ViewController: MTKViewDelegate {
         )
         
         // SHAPES
-        var triangle = Shapes.Square(scale: 500)
+        var triangle = Shapes.Triangle(scale: 300)
+        triangle.center.y += 500
         triangle.render(using: renderEncoder)
+        
+        var square = Shapes.Square(scale: 300)
+        square.render(using: renderEncoder)
+        
+        var hexagon = Shapes.Hexagon(scale: 300)
+        hexagon.center.y -= 500
+        hexagon.render(using: renderEncoder)
         
         // FINISH
         renderEncoder.endEncoding()

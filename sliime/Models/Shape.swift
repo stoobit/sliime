@@ -29,10 +29,18 @@ enum Shapes {
         VertexData(position: simd_float2( 0.5,  0.5), color: Color.red)
     }
     
-    static func render(_ shapes: [any Renderable], using renderEncoder: any MTLRenderCommandEncoder) {
-        shapes.forEach {
-            var shape = $0
-            shape.render(using: renderEncoder)
+    #Multigon("Hexagon") {
+        VertexData(position: simd_float2( 0.0,    0.50), color: Color.red)
+        VertexData(position: simd_float2(-0.433,  0.25), color: Color.red)
+        VertexData(position: simd_float2( 0.433,  0.25), color: Color.red)
+        VertexData(position: simd_float2(-0.433, -0.25), color: Color.red)
+        VertexData(position: simd_float2( 0.433, -0.25), color: Color.red)
+        VertexData(position: simd_float2( 0.0,   -0.50), color: Color.red)
+    }
+    
+    static func render( _ shapes: inout [any Renderable], using renderEncoder: MTLRenderCommandEncoder) {
+        for index in 0..<shapes.count {
+            shapes[index].render(using: renderEncoder)
         }
     }
 }
