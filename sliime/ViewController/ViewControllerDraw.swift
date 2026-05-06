@@ -32,12 +32,11 @@ extension ViewController: MTKViewDelegate {
         )
         
         // SHAPES
-        let triangle = Shape.Triangle(scale: 20)
-        var vertices = triangle.vertices
+        var triangle = Shape.Triangle(scale: 20)
         
         renderEncoder.setVertexBytes(
-            &vertices,
-            length: MemoryLayout.stride(ofValue: vertices),
+            &triangle.vertices,
+            length: MemoryLayout.stride(ofValue: triangle.vertices),
             index: Int(InputBufferIndexForVertexData.rawValue)
         )
         

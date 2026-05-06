@@ -32,16 +32,10 @@ public struct MultigonMacro: DeclarationMacro {
                     .trimmingCharacters(in: .whitespacesAndNewlines)
                 
                 """
-                private static let vertices: InlineArray<\(raw: vertices.count), \(raw: type)> = [
+                var vertices: InlineArray<\(raw: vertices.count), \(raw: type)> = [
                     \(raw: string)
                 ]
                 """
-                
-                try
-                VariableDeclSyntax("var vertices: InlineArray<\(raw: vertices.count), \(raw: type)>") {
-                    "return Self.vertices"
-                }
-                .with(\.leadingTrivia, .newlines(2))
             })
         ]
     }

@@ -35,16 +35,12 @@ final class MultigonTests: XCTestCase {
                     self.scale = scale
                 }
 
-                private static let vertices: InlineArray<4, Vertex> = [
+                var vertices: InlineArray<4, Vertex> = [
                     Vertex(position: simd_float2(-1.0, 1.0), color: white),
                     Vertex(position: simd_float2(1.0, -1.0), color: white),
                     Vertex(position: simd_float2(-1.0, -1.0), color: white),
                     Vertex(position: simd_float2(1.0, 1.0), color: white)
                 ]
-            
-                var vertices: InlineArray<4, Vertex> {
-                    return Self.vertices
-                }
             }
             """,
             macros: testMacros
