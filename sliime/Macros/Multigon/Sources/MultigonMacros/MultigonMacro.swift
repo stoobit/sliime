@@ -14,28 +14,56 @@ public struct MultigonMacro: DeclarationMacro {
         let (type, vertices) = vertices(from: node)
         
         return [
-            DeclSyntax(try StructDeclSyntax("struct \(raw: name)") {
+            DeclSyntax(try StructDeclSyntax("struct \(raw: name): Renderable") {
                 try VariableDeclSyntax("var center: SIMD3<Float> = [0, 0, 0]")
                     .with(\.trailingTrivia, .newlines(2))
                 
                 try VariableDeclSyntax("var scale: Float")
                 try VariableDeclSyntax("var rotation: Float = 0")
                 
-                try InitializerDeclSyntax("init(scale: Float)") {
-                    "self.scale = scale"
-                }
-                .with(\.leadingTrivia, .newlines(2))
-                .with(\.trailingTrivia, .newlines(2))
-                
                 let string: String = calculate(using: vertices)
                     .joined(separator: ",")
                     .trimmingCharacters(in: .whitespacesAndNewlines)
                 
-                """
-                var vertices: InlineArray<\(raw: vertices.count), \(raw: type)> = [
-                    \(raw: string)
-                ]
-                """
+                try VariableDeclSyntax(
+                    """
+                    var vertices: InlineArray<\(raw: vertices.count), \(raw: type)> = [
+                        \(raw: string)
+                    ]
+                    """
+                )
+                .with(\.leadingTrivia, .newlines(2))
+                
+                try FunctionDeclSyntax("mutating func render(using renderEncoder: any MTLRenderCommandEncoder)") {
+                    let buffers = [
+                        ("vertices", "InputBufferIndexForVertexData"),
+                        ("center", "InputBufferIndexForCenter"),
+                        ("scale", "InputBufferIndexForScale"),
+                        ("rotation", "InputBufferIndexForRotation")
+                    ]
+                    
+                    for (property, bufferIndex) in buffers {
+                        ExprSyntax(
+                                """
+                                renderEncoder.setVertexBytes(
+                                    &\(raw: property),
+                                    length: MemoryLayout.stride(ofValue: \(raw: property)),
+                                    index: Int(\(raw: bufferIndex).rawValue)
+                                )
+                                """
+                        )
+                        .with(\.trailingTrivia, .newlines(2))
+                    }
+                    
+                    ExprSyntax(
+                            """
+                            renderEncoder.drawPrimitives(
+                                type: .triangleStrip, vertexStart: 0, vertexCount: \(raw: vertices.count)
+                            )
+                            """
+                        )
+                }
+                .with(\.leadingTrivia, .newlines(2))
             })
         ]
     }

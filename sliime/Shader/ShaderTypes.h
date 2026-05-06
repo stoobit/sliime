@@ -22,9 +22,11 @@ typedef enum InputBufferIndex
 {
     
     InputBufferIndexForVertexData = 0,
-    InputBufferIndexForViewportSize = 1,
-    InputBufferIndexForTime = 2,
-    InputBufferIndexForGravity = 3,
+    InputBufferIndexForCenter = 1,
+    InputBufferIndexForScale = 2,
+    InputBufferIndexForRotation = 3,
+    
+    InputBufferIndexForViewportSize = 4,
     
 } InputBufferIndex;
 
