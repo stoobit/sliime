@@ -33,14 +33,7 @@ extension ViewController: MTKViewDelegate {
         
         // SHAPES
         var triangle = Shape.Triangle(scale: 20)
-        
-        renderEncoder.setVertexBytes(
-            &triangle.vertices,
-            length: MemoryLayout.stride(ofValue: triangle.vertices),
-            index: Int(InputBufferIndexForVertexData.rawValue)
-        )
-        
-        renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 3)
+        triangle.render(using: renderEncoder)
         
         // FINISH
         renderEncoder.endEncoding()
