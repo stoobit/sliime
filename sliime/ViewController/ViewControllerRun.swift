@@ -30,5 +30,17 @@ extension ViewController {
             renderable[index].velocity.y += object.acceleration.y * time
             renderable[index].position.y += object.velocity.y * time
         }
+        
+        if renderable.indices.contains(1) {
+            let one = renderable[0].hitbox
+            let two = renderable[1].hitbox
+            
+            // is overlapping
+            if (one.minX < two.maxX && two.minX < one.maxX && one.minY < two.maxY && two.minY < one.maxY) {
+                print("Overlapping")
+            } else {
+                print("not")
+            }
+        }
     }
 }

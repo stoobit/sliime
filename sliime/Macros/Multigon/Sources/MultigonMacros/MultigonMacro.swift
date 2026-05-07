@@ -24,6 +24,18 @@ public struct MultigonMacro: DeclarationMacro {
                 
                 try VariableDeclSyntax("var scale: Float")
                 try VariableDeclSyntax("var rotation: Float = 0")
+                    .with(\.trailingTrivia, .newlines(2))
+                
+                try VariableDeclSyntax("var hitbox: SIMD4<Float>") {
+                    switch isProcedural {
+                    case true:
+                        "let position: SIMD4<Float> = [position.x, position.x, position.y, position.y]"
+                        "return [-0.5, 0.5, -0.5, 0.5] * scale + position"
+                    case false:
+                        "let position: SIMD4<Float> = [position.x, position.x, position.y, position.y]"
+                        "return \(raw: hitbox(using: vertices)) * scale + position"
+                    }
+                }
                 
                 let strings = isProcedural ? procedural(using: vertices) : calculate(using: vertices)
                 let string = strings
@@ -139,6 +151,10 @@ public struct MultigonMacro: DeclarationMacro {
         }
         
         return vertices
+    }
+    
+    static private func hitbox(using vertices: [String]) -> String {
+        return "[0, 0, 0, 0]"
     }
     
     static private func replace(in string: String, using point: SIMD3<Double>) -> String {
