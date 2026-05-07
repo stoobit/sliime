@@ -39,7 +39,7 @@ public struct MultigonMacro: DeclarationMacro {
                 
                 let strings = isProcedural ? procedural(using: vertices) : calculate(using: vertices)
                 let string = strings
-                    .joined(separator: ",\n")
+                    .joined(separator: ",")
                     .trimmingCharacters(in: .whitespacesAndNewlines)
                 
                 try VariableDeclSyntax(
@@ -154,7 +154,22 @@ public struct MultigonMacro: DeclarationMacro {
     }
     
     static private func hitbox(using vertices: [String]) -> String {
-        return "[0, 0, 0, 0]"
+        var points: [SIMD3<Double>] = vertices
+            .map { parse(vertex: $0) }
+        
+        let center = points.reduce(.zero, +) / Double(points.count)
+        
+        for (index, point) in points.enumerated() {
+            let string = vertices[index]
+            points[index] = point - center
+        }
+        
+        let minX = points.map { $0.x }.min() ?? 0
+        let maxX = points.map { $0.x }.max() ?? 0
+        let minY = points.map { $0.y }.min() ?? 0
+        let maxY = points.map { $0.y }.max() ?? 0
+        
+        return "[\(minX), \(maxX), \(minY), \(maxY)]"
     }
     
     static private func replace(in string: String, using point: SIMD3<Double>) -> String {
