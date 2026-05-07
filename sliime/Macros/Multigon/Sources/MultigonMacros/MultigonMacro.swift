@@ -26,6 +26,9 @@ public struct MultigonMacro: DeclarationMacro {
                 try VariableDeclSyntax("var rotation: Float = 0")
                     .with(\.trailingTrivia, .newlines(2))
                 
+                try VariableDeclSyntax("var restitution: Float = 0.8")
+                    .with(\.trailingTrivia, .newlines(2))
+                
                 try VariableDeclSyntax("var hitbox: SIMD4<Float>") {
                     switch isProcedural {
                     case true:
@@ -160,7 +163,6 @@ public struct MultigonMacro: DeclarationMacro {
         let center = points.reduce(.zero, +) / Double(points.count)
         
         for (index, point) in points.enumerated() {
-            let string = vertices[index]
             points[index] = point - center
         }
         

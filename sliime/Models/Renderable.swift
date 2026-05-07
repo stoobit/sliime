@@ -16,6 +16,8 @@ protocol Renderable {
     var scale: Float { get set }
     var rotation: Float { get set }
     
+    var restitution: Float { get set }
+    
     var hitbox: SIMD4<Float> { get }
     
     mutating func render(using renderEncoder: any MTLRenderCommandEncoder)
@@ -49,6 +51,12 @@ extension Renderable {
     func rotation(_ value: Float) -> Self {
         var copy = self
         copy.rotation = value
+        return copy
+    }
+    
+    func restitution(_ value: Float) -> Self {
+        var copy = self
+        copy.restitution = value
         return copy
     }
 }

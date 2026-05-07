@@ -10,17 +10,25 @@ import Multigon
 import Foundation
 
 struct Shapes {
-    #Multigon("Triangle") {
-        VertexData(position: simd_float2( 0.0,  0.5), color: Color.red)
-        VertexData(position: simd_float2( 0.5, -0.5), color: Color.red)
-        VertexData(position: simd_float2(-0.5, -0.5), color: Color.red)
+    #Multigon("Object") {
+        VertexData(position: simd_float2(-0.5, -0.5), color: Color.blue)
+        VertexData(position: simd_float2(-0.5,  0.5), color: Color.blue)
+        VertexData(position: simd_float2( 0.5, -0.5), color: Color.blue)
+        VertexData(position: simd_float2( 0.5,  0.5), color: Color.blue)
+    }
+
+    #Multigon("Floor") {
+        VertexData(position: simd_float2(-1.0, -0.2), color: Color.red)
+        VertexData(position: simd_float2(-1.0,  0.2), color: Color.red)
+        VertexData(position: simd_float2( 1.0, -0.2), color: Color.red)
+        VertexData(position: simd_float2( 1.0,  0.2), color: Color.red)
     }
     
-    #Multigon("Square") {
-        VertexData(position: simd_float2(-0.5, -0.5), color: Color.red)
-        VertexData(position: simd_float2(-0.5,  0.5), color: Color.red)
-        VertexData(position: simd_float2( 0.5, -0.5), color: Color.red)
-        VertexData(position: simd_float2( 0.5,  0.5), color: Color.red)
+    
+    #Multigon("Triangle") {
+        VertexData(position: simd_float2( 0.0,  0.5), color: Color.blue)
+        VertexData(position: simd_float2( 0.5, -0.5), color: Color.blue)
+        VertexData(position: simd_float2(-0.5, -0.5), color: Color.blue)
     }
     
     #Multigon("Hexagon") {
@@ -32,11 +40,7 @@ struct Shapes {
         VertexData(position: simd_float2( 0.0,   -0.50), color: Color.red)
     }
     
-    #Multigon("RedCircle") {
+    #Multigon("Circle") {
         Procedural(edges: 100, color: Color.red)
-    }
-    
-    #Multigon("BlueCircle") {
-        Procedural(edges: 100, color: Color.blue)
     }
 }
